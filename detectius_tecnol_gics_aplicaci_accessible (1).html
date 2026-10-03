@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detectius Tecnològics - 1r d'ESO (DUA, SIEI & Accessibilitat Visual)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#38bdf8',
+                            success: '#22c55e',
+                            warning: '#f59e0b',
+                            danger: '#ef4444',
+                            purple: '#a855f7',
+                            text: '#f8fafc'
+                        }
+                    },
+                    fontSize: {
+                        'accessible-base': '1.25rem',
+                        'accessible-lg': '1.5rem',
+                        'accessible-xl': '2rem'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .focus-accessible:focus {
+            outline: 4px solid #38bdf8 !important;
+            outline-offset: 4px;
+        }
+
+        .btn-touch {
+            min-height: 52px;
+            min-width: 52px;
+        }
+
+        .card-high-contrast {
+            background-color: #1e293b;
+            border: 2px solid #334155;
+        }
+
+        .card-selected {
+            border-color: #38bdf8 !important;
+            background-color: #0f2744 !important;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .pictogram-box {
+            background-color: #0f172a;
+            border: 2px solid #38bdf8;
+        }
+
+        .high-contrast-mode {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+        }
+        
+        .high-contrast-mode .card-high-contrast {
+            background-color: #000000 !important;
+            border-color: #ffff00 !important;
+            color: #ffff00 !important;
+        }
+
+        .high-contrast-mode button {
+            border-color: #ffff00 !important;
+            color: #ffff00 !important;
+        }
+
+        .tab-btn-active {
+            background-color: #38bdf8 !important;
+            color: #0f172a !important;
+            font-weight: 900 !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 md:p-6 bg-slate-900 text-slate-100">
+
+    <!-- BARRA SUPERIOR D'ACCESSIBILITAT I CONTROL DE PESTANYES -->
+    <header class="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between p-4 bg-slate-800 rounded-2xl border-2 border-slate-700 shadow-xl mb-4 gap-4">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+            <span class="text-4xl" role="img" aria-label="Lupa de Detectiu">🔎</span>
+            <div>
+                <h1 class="text-xl md:text-2xl font-black text-sky-400 tracking-wide uppercase">DETECTIUS TECNOLÒGICS</h1>
+                <p class="text-xs md:text-sm text-slate-300 font-bold">1r ESO · Tecnologia i Digitalització</p>
+            </div>
+        </div>
+        
+        <!-- CONTROLS D'ALT CONTRAST I REINICI -->
+        <div class="flex items-center space-x-3">
+            <!-- Alt Contrast -->
+            <button onclick="toggleHighContrast()" class="btn-touch bg-slate-700 hover:bg-slate-600 text-amber-300 px-4 py-2 rounded-xl font-extrabold border border-slate-500 focus-accessible flex items-center space-x-2" title="Canviar Contrast Visual">
+                <span class="text-xl">👁️</span>
+                <span class="text-xs uppercase hidden sm:inline">ALT CONTRAST</span>
+            </button>
+            
+            <button onclick="goHome()" class="btn-touch bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl font-extrabold border border-slate-500 focus-accessible flex items-center space-x-2" title="Inici">
+                <span class="text-xl">🏠</span>
+                <span class="text-xs uppercase hidden sm:inline">INICI</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3 PESTANYES PRINCIPALS PERMANENTS -->
+    <nav class="w-full max-w-5xl mx-auto mb-4 grid grid-cols-3 gap-2 md:gap-4">
+        <button id="tab-btn-theory" onclick="switchTab('theory')" class="btn-touch tab-btn-active bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all focus-accessible">
+            <span class="text-2xl">📘</span>
+            <span class="text-xs md:text-base uppercase tracking-wider">1. TEORIA</span>
+        </button>
+        <button id="tab-btn-practice" onclick="switchTab('practice')" class="btn-touch bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all focus-accessible">
+            <span class="text-2xl">🧠</span>
+            <span class="text-xs md:text-base uppercase tracking-wider">2. HO ENTENC I HO PRACTICO</span>
+        </button>
+        <button id="tab-btn-apply" onclick="switchTab('apply')" class="btn-touch bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all focus-accessible">
+            <span class="text-2xl">🛠️</span>
+            <span class="text-xs md:text-base uppercase tracking-wider">3. HO APLICO</span>
+        </button>
+    </nav>
+
+    <!-- BARRA DE PROGRÉS I MARCADOR DE PUNTS -->
+    <div class="w-full max-w-5xl mx-auto mb-4 bg-slate-800 rounded-2xl p-3 border border-slate-700 flex items-center justify-between space-x-4 shadow-md">
+        <div class="flex items-center space-x-2 min-w-[120px]">
+            <span class="text-xs font-black text-sky-400 uppercase" id="progress-text">PROGRESSIÓ</span>
+        </div>
+        <div class="w-full bg-slate-900 rounded-full h-4 overflow-hidden border border-slate-700">
+            <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-emerald-400 h-full w-1/6 transition-all duration-500 rounded-full"></div>
+        </div>
+        <div id="score-badge" class="flex items-center space-x-1 text-sm font-black text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/40">
+            <span>⭐</span>
+            <span id="score-val">0</span>
+            <span class="text-xs text-emerald-300 hidden sm:inline">PTS</span>
+        </div>
+    </div>
+
+    <!-- CONTENIDOR PRINCIPAL -->
+    <main id="app-container" class="w-full max-w-5xl mx-auto flex-grow flex flex-col justify-center">
+
+        <!-- PANTALLA 0: BENVINGUDA / INICI -->
+        <section id="screen-welcome" class="app-screen space-y-6 text-center py-4">
+            <div class="card-high-contrast p-6 md:p-10 rounded-3xl shadow-2xl max-w-3xl mx-auto space-y-6 border-2 border-sky-500/30">
+                <div class="w-24 h-24 mx-auto bg-sky-950 border-4 border-sky-400 rounded-3xl flex items-center justify-center text-5xl shadow-xl">
+                    🕵️‍♂️
+                </div>
+                <h2 class="text-2xl md:text-4xl font-black text-white tracking-wide">MISSIÓ: DETECTIUS TECNOLÒGICS</h2>
+                <p class="text-accessible-base text-slate-200 leading-relaxed font-medium">
+                    Explora com funciona la tecnologia del teu entorn mitjançant esquemes visuals, imatges, pictogrames i reptes interactius!
+                </p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left pt-2">
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-center space-x-3">
+                        <span class="text-3xl">📘</span>
+                        <div>
+                            <div class="text-xs text-sky-400 font-bold uppercase">1. TEORIA</div>
+                            <div class="text-sm font-extrabold text-slate-100">Esquemes Visuals</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-center space-x-3">
+                        <span class="text-3xl">🧠</span>
+                        <div>
+                            <div class="text-xs text-emerald-400 font-bold uppercase">2. PRACTICO</div>
+                            <div class="text-sm font-extrabold text-slate-100">3 Nivells Visuals</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-center space-x-3">
+                        <span class="text-3xl">🛠️</span>
+                        <div>
+                            <div class="text-xs text-amber-400 font-bold uppercase">3. APLICO</div>
+                            <div class="text-sm font-extrabold text-slate-100">Reptes de Taller</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="startApp()" class="btn-touch w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-accessible-lg font-black px-8 py-4 rounded-2xl shadow-xl hover:shadow-emerald-500/20 active:scale-95 transition-all focus-accessible flex items-center justify-center space-x-3">
+                        <span>🚀</span>
+                        <span>COMENÇAR LA MISSIÓ</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTANYA 1: TEORIA VISUAL I INTERACTIVA -->
+        <section id="tab-content-theory" class="app-screen hidden space-y-6">
+            <div class="bg-slate-800/90 p-4 rounded-2xl border border-sky-500/30 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">📘</span>
+                    <div>
+                        <h2 class="text-xl font-black text-sky-400 uppercase">TEORIA VISUAL</h2>
+                        <p class="text-xs text-slate-300 font-bold">Observa els esquemes, pictogrames i exemples gràfics</p>
+                    </div>
+                </div>
+                <div class="flex space-x-2" id="theory-nav-buttons">
+                    <!-- Es generen dinàmicament per passar de bloc visual -->
+                </div>
+            </div>
+
+            <!-- CARROUSEL / VISOR DE BLOCS TEÒRICS VISUALS -->
+            <div id="theory-card-container" class="space-y-6">
+                <!-- Es carrega dinàmicament el bloc teòric actiu -->
+            </div>
+        </section>
+
+        <!-- PESTANYA 2: HO ENTENC I HO PRACTICO (NIVELLS 1, 2 I 3) -->
+        <section id="tab-content-practice" class="app-screen hidden space-y-6">
+            <!-- CAPÇALERA DE NIVELL -->
+            <div class="bg-slate-800 p-4 rounded-2xl border border-emerald-500/30 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">🧠</span>
+                    <div>
+                        <span id="practice-level-badge" class="bg-emerald-500/20 text-emerald-300 text-xs font-black px-3 py-1 rounded-full uppercase border border-emerald-400/30">
+                            NIVELL 1 · HO RECONEC
+                        </span>
+                        <h2 id="practice-level-title" class="text-lg md:text-xl font-extrabold text-white mt-1">
+                            ACTIVITAT PRÀCTICA
+                        </h2>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="setPracticeLevel(1)" id="lvl-btn-1" class="btn-touch px-3 py-1 bg-emerald-500 text-slate-950 font-black rounded-xl text-xs">N1</button>
+                    <button onclick="setPracticeLevel(2)" id="lvl-btn-2" class="btn-touch px-3 py-1 bg-slate-700 text-slate-300 font-black rounded-xl text-xs">N2</button>
+                    <button onclick="setPracticeLevel(3)" id="lvl-btn-3" class="btn-touch px-3 py-1 bg-slate-700 text-slate-300 font-black rounded-xl text-xs">N3</button>
+                </div>
+            </div>
+
+            <!-- TARGETA D'ACTIVITAT -->
+            <div id="practice-activity-card" class="card-high-contrast p-6 rounded-3xl space-y-5 shadow-2xl border-t-4 border-t-emerald-400">
+                <!-- PREGUNTA / ENUNCIAT VISUAL -->
+                <div id="practice-question-box" class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-center space-x-3">
+                    <span id="practice-question-picto" class="text-4xl">❓</span>
+                    <p id="practice-question-text" class="text-accessible-base font-bold text-white">
+                        Carregant activitat pràctica...
+                    </p>
+                </div>
+
+                <!-- ÀREA INTERACTIVA -->
+                <div id="practice-interactive-area" class="space-y-4">
+                    <!-- Contingut generat dinàmicament per JS -->
+                </div>
+
+                <!-- RETROACCIÓ VISUAL -->
+                <div id="practice-feedback-box" class="hidden p-4 rounded-2xl font-bold flex items-center space-x-3 transition-all border-2">
+                    <span id="practice-feedback-icon" class="text-3xl"></span>
+                    <p id="practice-feedback-text" class="text-accessible-base"></p>
+                </div>
+
+                <!-- BANNER DE NIVELL SUPERAT -->
+                <div id="practice-level-success" class="hidden bg-emerald-950/90 border-2 border-emerald-400 p-6 rounded-2xl text-center space-y-3">
+                    <div class="text-4xl">🎉</div>
+                    <h3 id="practice-success-title" class="text-xl font-black text-emerald-300 uppercase">NIVELL SUPERAT!</h3>
+                    <p id="practice-success-desc" class="text-sm font-bold text-slate-200">Molt bé! Has demostrat que domines aquest nivell.</p>
+                    <button id="btn-next-level" onclick="nextPracticeLevel()" class="btn-touch bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg active:scale-95">
+                        ➡️ CONTINUAR AL SEGÜENT NIVELL
+                    </button>
+                </div>
+
+                <!-- BOTONS D'ACCIÓ -->
+                <div class="flex flex-wrap justify-between items-center pt-2 gap-3">
+                    <button id="practice-btn-hint" onclick="showPracticeHint()" class="btn-touch bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-sm px-4 py-2 rounded-xl border border-amber-500/40 focus-accessible flex items-center space-x-2">
+                        <span>💡</span>
+                        <span>PISTA VISUAL</span>
+                    </button>
+
+                    <div class="flex space-x-3">
+                        <button id="practice-btn-check" onclick="checkPracticeAnswer()" class="btn-touch bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-accessible-base px-8 py-3 rounded-2xl shadow-lg active:scale-95 transition-all focus-accessible flex items-center space-x-2">
+                            <span>COMPROVAR</span>
+                            <span>✅</span>
+                        </button>
+                        <button id="practice-btn-next" onclick="nextPracticeItem()" class="btn-touch hidden bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-accessible-base px-8 py-3 rounded-2xl shadow-lg active:scale-95 transition-all focus-accessible flex items-center space-x-2">
+                            <span>SEGÜENT</span>
+                            <span>➡️</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PESTANYA 3: HO APLICO (NIVELLS 1, 2 I 3) -->
+        <section id="tab-content-apply" class="app-screen hidden space-y-6">
+            <!-- CAPÇALERA D'APLICACIÓ -->
+            <div class="bg-slate-800 p-4 rounded-2xl border border-amber-500/30 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-3xl">🛠️</span>
+                    <div>
+                        <span id="apply-level-badge" class="bg-amber-500/20 text-amber-300 text-xs font-black px-3 py-1 rounded-full uppercase border border-amber-400/30">
+                            NIVELL 1 · APLICO
+                        </span>
+                        <h2 id="apply-level-title" class="text-lg md:text-xl font-extrabold text-white mt-1">
+                            REPTES PRÀCTICS I RESOLLUCIÓ DE PROBLEMES
+                        </h2>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="setApplyLevel(1)" id="app-lvl-btn-1" class="btn-touch px-3 py-1 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">N1</button>
+                    <button onclick="setApplyLevel(2)" id="app-lvl-btn-2" class="btn-touch px-3 py-1 bg-slate-700 text-slate-300 font-black rounded-xl text-xs">N2</button>
+                    <button onclick="setApplyLevel(3)" id="app-lvl-btn-3" class="btn-touch px-3 py-1 bg-slate-700 text-slate-300 font-black rounded-xl text-xs">N3</button>
+                </div>
+            </div>
+
+            <!-- TARGETA DE REPTE -->
+            <div id="apply-activity-card" class="card-high-contrast p-6 rounded-3xl space-y-5 shadow-2xl border-t-4 border-t-amber-400">
+                <!-- SITUACIÓ REAL / REPTES VISUALS -->
+                <div id="apply-question-box" class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-black text-amber-400 uppercase tracking-wider">SITUACIÓ REAL / CAS DE TALLER</span>
+                    </div>
+                    <p id="apply-question-text" class="text-accessible-base font-bold text-white">
+                        Carregant repte d'aplicació...
+                    </p>
+                </div>
+
+                <!-- ÀREA INTERACTIVA -->
+                <div id="apply-interactive-area" class="space-y-4">
+                    <!-- Generat per JS -->
+                </div>
+
+                <!-- RETROACCIÓ VISUAL -->
+                <div id="apply-feedback-box" class="hidden p-4 rounded-2xl font-bold flex items-center space-x-3 transition-all border-2">
+                    <span id="apply-feedback-icon" class="text-3xl"></span>
+                    <p id="apply-feedback-text" class="text-accessible-base"></p>
+                </div>
+
+                <!-- BANNER DE NIVELL SUPERAT -->
+                <div id="apply-level-success" class="hidden bg-emerald-950/90 border-2 border-emerald-400 p-6 rounded-2xl text-center space-y-3">
+                    <div class="text-4xl">🏆</div>
+                    <h3 id="apply-success-title" class="text-xl font-black text-emerald-300 uppercase">REPTE SUPERAT!</h3>
+                    <p id="apply-success-desc" class="text-sm font-bold text-slate-200">Has aplicat la tecnologia per resoldre un problema real!</p>
+                    <button id="btn-next-apply-level" onclick="nextApplyLevel()" class="btn-touch bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg active:scale-95">
+                        ➡️ CONTINUAR AL SEGÜENT REPTE
+                    </button>
+                </div>
+
+                <!-- BOTONS D'ACCIÓ -->
+                <div class="flex flex-wrap justify-between items-center pt-2 gap-3">
+                    <button id="apply-btn-hint" onclick="showApplyHint()" class="btn-touch bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-sm px-4 py-2 rounded-xl border border-amber-500/40 focus-accessible flex items-center space-x-2">
+                        <span>💡</span>
+                        <span>PISTA VISUAL</span>
+                    </button>
+
+                    <div class="flex space-x-3">
+                        <button id="apply-btn-check" onclick="checkApplyAnswer()" class="btn-touch bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-accessible-base px-8 py-3 rounded-2xl shadow-lg active:scale-95 transition-all focus-accessible flex items-center space-x-2">
+                            <span>COMPROVAR</span>
+                            <span>✅</span>
+                        </button>
+                        <button id="apply-btn-next" onclick="nextApplyItem()" class="btn-touch hidden bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-accessible-base px-8 py-3 rounded-2xl shadow-lg active:scale-95 transition-all focus-accessible flex items-center space-x-2">
+                            <span>SEGÜENT</span>
+                            <span>➡️️</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANTALLA FINAL: CARNET DE DETECTIU TECNOLÒGIC -->
+        <section id="screen-summary" class="app-screen hidden space-y-6 text-center py-6">
+            <div class="card-high-contrast p-8 rounded-3xl shadow-2xl max-w-3xl mx-auto space-y-6 border-4 border-emerald-500/60">
+                <div class="w-28 h-28 mx-auto bg-emerald-950 border-4 border-emerald-400 rounded-3xl flex items-center justify-center text-6xl shadow-xl animate-bounce">
+                    🎓
+                </div>
+                <h2 class="text-3xl font-black text-emerald-400 uppercase tracking-wide">ENHORABONA, DETECTIU!</h2>
+                <p class="text-accessible-lg text-slate-200 font-bold">
+                    Has completat tots els nivells i reptes de Tecnologia de 1r d'ESO!
+                </p>
+
+                <!-- Targeta de Carnet de Detectiu -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-2xl border-2 border-sky-400 text-left space-y-4 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-2 right-2 text-6xl opacity-10 font-black">1r ESO</div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-5xl">🆔</span>
+                        <div>
+                            <div class="text-xs font-black text-sky-400 uppercase">TECNOLOGIA I DIGITALITZACIÓ</div>
+                            <div class="text-xl font-extrabold text-white">CARNET DE DETECTIU TECNOLÒGIC</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-slate-300 font-bold border-t border-slate-700 pt-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-emerald-400">✅</span>
+                            <span>Teoria visual d'eines i materials</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-emerald-400">✅</span>
+                            <span>Les 6 fases del procés tecnològic</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-emerald-400">✅</span>
+                            <span>Criteris de decisió i seguretat</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-emerald-400">✅</span>
+                            <span>Autòpsia d'objectes (Bolígraf)</span>
+                        </div>
+                        <div class="flex items-center space-x-2 md:col-span-2">
+                            <span class="text-emerald-400">✅</span>
+                            <span>Resolució de reptes pràctics de taller</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center pt-2">
+                    <button onclick="resetApp()" class="btn-touch bg-sky-500 hover:bg-sky-400 text-slate-950 text-accessible-base font-black px-8 py-4 rounded-2xl shadow-xl active:scale-95 transition-all focus-accessible flex items-center space-x-2">
+                        <span>🔄</span>
+                        <span>TORNAR A COMENÇAR</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER NAVEGACIÓ -->
+    <footer class="w-full max-w-5xl mx-auto mt-4 p-3 bg-slate-800 rounded-2xl border border-slate-700 flex justify-between items-center text-xs font-extrabold text-slate-400">
+        <span class="text-slate-400">ADAPTACIÓ ACCESSIBLE DUA / SIEI · TECNOLOGIA 1r ESO</span>
+        <span class="text-sky-400">SUPORT VISUAL COMPLET</span>
+    </footer>
+
+    <!-- LÒGICA JAVASCRIPT DE L'APLICACIÓ -->
+    <script>
+        // BASE DE DADES DE TEORIA VISUAL (ESQUEMES, ABANS/DESPRÉS, RECORDA, OBSERVA)
+        const theoryData = [
+            {
+                id: "t1",
+                title: "1. QUÈ ÉS LA TECNOLOGIA?",
+                picto: "💡",
+                schemaType: "before_after",
+                beforePicto: "🥶",
+                beforeLabel: "PROBLEMA / NECESSITAT",
+                beforeDesc: "Tenim fred o no hi ha llum",
+                afterPicto: "🔥",
+                afterLabel: "SOLUCIÓ TECNOLÒGICA",
+                afterDesc: "Creem la calefacció o la llanterna",
+                mira: "La tecnologia neix d'un PROBLEMA i crea una SOLUCIÓ.",
+                observa: "Tots els objectes creats per les persones són TECNOLOGIA.",
+                recorda: "PROBLEMA ➡️ TECNOLOGIA ➡️ SOLUCIÓ"
+            },
+            {
+                id: "t2",
+                title: "2. MATERIALS, EINES I MÀQUINES",
+                picto: "📦",
+                schemaType: "comparison_3",
+                items: [
+                    { title: "MATERIAL", picto: "🪵", desc: "Es transforma (fusta, plàstic, metall)" },
+                    { title: "EINA", picto: "🔨", desc: "S'agafa amb la mà (martell, xerrac)" },
+                    { title: "MÀQUINA", picto: "💻", desc: "Té mecanismes o electricitat (ordinador, taladre)" }
+                ],
+                mira: "No barrejis fusta (material) amb el martell (eina) o el taladre (màquina).",
+                observa: "Les eines ajuden les mans a treballar el material.",
+                recorda: "MATERIAL (es transforma) | EINA (manual) | MÀQUINA (elèctrica)"
+            },
+            {
+                id: "t3",
+                title: "3. LES 6 FASES DEL PROCÉS TECNOLÒGIC",
+                picto: "🔄",
+                schemaType: "process_steps",
+                steps: [
+                    { num: "1", label: "Necessitat", picto: "❓" },
+                    { num: "2", label: "Anàlisi", picto: "📋" },
+                    { num: "3", label: "Recerca", picto: "🔍" },
+                    { num: "4", label: "Idees", picto: "✏️" },
+                    { num: "5", label: "Construcció", picto: "🔨" },
+                    { num: "6", label: "Avaluació", picto: "✅" }
+                ],
+                mira: "Sempre seguim un ordre: primer pensem i dibuixem, després construïm.",
+                observa: "No es construeix mai sense dibuixar la idea abans.",
+                recorda: "1. NECESSITAT ➡️ 2. DIBUIX ➡️ 3. CONSTRUCCIÓ"
+            },
+            {
+                id: "t4",
+                title: "4. CRITERIS DE DECISIÓ DE SOLUCIONS",
+                picto: "📊",
+                schemaType: "comparison_3",
+                items: [
+                    { title: "FUNCIONALITAT", picto: "⚙️", desc: "Funciona bé per resoldre el problema?" },
+                    { title: "SEGURETAT", picto: "🛡️", desc: "És segur i no fa mal a ningú?" },
+                    { title: "SOSTENIBILITAT", picto: "🌿", desc: "Respecta el medi ambient i recicla?" }
+                ],
+                mira: "Quan tenim 3 idees, triem la més segura, barata i sostenible.",
+                observa: "Una bona idea ha de ser util i segura.",
+                recorda: "AVALUEM: Funciona? És segura? CUIDA LA TERRA?"
+            },
+            {
+                id: "t5",
+                title: "5. AUTÒPSIA D'UN OBJECTE (BOLÍGRAF)",
+                picto: "🔍",
+                schemaType: "autopsy_schema",
+                parts: [
+                    { name: "Carcassa", picto: "🖊️", desc: "Protegeix l'interior" },
+                    { name: "Molla", picto: "🌀", desc: "Proporciona elasticitat" },
+                    { name: "Càrrega de tinta", picto: "✒️", desc: "Conté la tinta" }
+                ],
+                mira: "Desmuntar un objecte ens ensenya com està fet per dins.",
+                observa: "La molla de metall permet que la punta entri i surti.",
+                recorda: "AUTÒPSIA = Investigar les peces d'un objecte"
+            },
+            {
+                id: "t6",
+                title: "6. SEGURETAT AL TALLER DE TECNOLOGIA",
+                picto: "⚠️",
+                schemaType: "correct_incorrect",
+                correctPicto: "🥽",
+                correctTitle: "CORRECTE",
+                correctDesc: "Portar ulleres, ordre a la taula, demanar ajuda",
+                incorrectPicto: "🏃",
+                incorrectTitle: "INCORRECTE / PERILLÓS",
+                incorrectDesc: "Córrer, no recollir o utilitzar eines sense permís",
+                mira: "Al taller la seguretat és la prioritat número 1.",
+                observa: "Davant de qualsevol dubte amb una eina, pregunta al professor.",
+                recorda: "ORDRE + ATENCIÓ = PREVENCIÓ D'ACCIDENTS"
+            }
+        ];
+
+        // BASE DE DADES DE PRÀCTICA (HO ENTENC I HO PRACTICO)
+        const practiceData = {
+            level1: [
+                {
+                    id: "p1_1",
+                    picto: "💡",
+                    question: "Quin d'aquests 3 elements és una SOLUCIÓ TECNOLÒGICA creada per les persones?",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Llanterna Elèctrica", picto: "🔦", correct: true },
+                        { id: "o2", text: "Roca de la muntanya", picto: "🪨", correct: false },
+                        { id: "o3", text: "Poma de l'arbre", picto: "🍎", correct: false }
+                    ],
+                    hint: "La tecnologia la fabriquen les persones per resoldre un problema."
+                },
+                {
+                    id: "p1_2",
+                    picto: "🔨",
+                    question: "Identifica quina imatge correspon a una EINA MANUAL d'agafar amb la mà:",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Martell", picto: "🔨", correct: true },
+                        { id: "o2", text: "Fusta", picto: "🪵", correct: false },
+                        { id: "o3", text: "Ordinador", picto: "💻", correct: false }
+                    ],
+                    hint: "L'eina manual s'agafa directament amb la mà per treballar."
+                }
+            ],
+            level2: [
+                {
+                    id: "p2_1",
+                    picto: "📦",
+                    question: "Classifica aquests 3 elements segons la seva categoria:",
+                    type: "categorization",
+                    items: [
+                        { id: "i1", name: "Plàstic", picto: "🥤", correctCategory: "material" },
+                        { id: "i2", name: "Xerrac", picto: "🪚", correctCategory: "eina" },
+                        { id: "i3", name: "Taladre", picto: "⚙️", correctCategory: "maquina" }
+                    ],
+                    categories: [
+                        { id: "material", title: "MATERIAL", picto: "📦" },
+                        { id: "eina", title: "EINA", picto: "🛠️" },
+                        { id: "maquina", title: "MÀQUINA", picto: "💻" }
+                    ],
+                    hint: "Els materials es transformen, les eines s'agafen a mà i les màquines porten motor o electricitat."
+                },
+                {
+                    id: "p2_2",
+                    picto: "🔄",
+                    question: "Ordena aquestes 3 fases del Procés Tecnològic en l'ordre correcte:",
+                    type: "ordering",
+                    steps: [
+                        { id: "s1", text: "1. Tenir una NECESSITAT", picto: "❓", correctOrder: 1 },
+                        { id: "s2", text: "2. Dibuixar IDEES", picto: "✏️", correctOrder: 2 },
+                        { id: "s3", text: "3. CONSTRUIR la solució", picto: "🔨", correctOrder: 3 }
+                    ],
+                    hint: "Primer la pregunta o problema (1), després el dibuix (2) i finalment la construcció (3)."
+                }
+            ],
+            level3: [
+                {
+                    id: "p3_1",
+                    picto: "🔍",
+                    question: "Autòpsia Tecnològica: Tria la peça elàstica de metall que fa pujar i baixar la punta del bolígraf:",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Molla de Metall", picto: "🌀", correct: true },
+                        { id: "o2", text: "Carcassa de Plàstic", picto: "🖊️", correct: false },
+                        { id: "o3", text: "Polsador Superior", picto: "🔘", correct: false }
+                    ],
+                    hint: "És la peça en forma d'espiral elàstica."
+                }
+            ]
+        };
+
+        // BASE DE DADES D'APLICACIÓ (HO APLICO)
+        const applyData = {
+            level1: [
+                {
+                    id: "a1_1",
+                    picto: "🎒",
+                    question: "CAS REAL: En Marc porta una motxilla molt pesada i li fa mal l'esquena cada dia. Quina és la millor solució tecnològica?",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Utilitzar un carro amb rodes adaptat", picto: "🛒", correct: true },
+                        { id: "o2", text: "Portar la motxilla penjada del cap", picto: "🎒", correct: false },
+                        { id: "o3", text: "Deixar de venir a l'institut", picto: "🚫", correct: false }
+                    ],
+                    hint: "Busquem una solució pràctica que cuidi la salut i l'esquena."
+                }
+            ],
+            level2: [
+                {
+                    id: "a2_1",
+                    picto: "⚠️",
+                    question: "SITUACIÓ DE TALLER: Vols tallar una taula de fusta amb el xerrac però no saps com fixar-la a la taula.",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Subjectar la fusta amb un serjant o cargol de banc i preguntar al docent", picto: "🗜️", correct: true },
+                        { id: "o2", text: "Subjectar la fusta amb la mà directament a prop del tall", picto: "🖐️", correct: false },
+                        { id: "o3", text: "Tallar la fusta a l'aire sense fixar-la", picto: "💨", correct: false }
+                    ],
+                    hint: "La fusta ha d'estar sempre ben fixada amb un serjant abans de tallar."
+                }
+            ],
+            level3: [
+                {
+                    id: "a3_1",
+                    picto: "🛠️",
+                    question: "DISSENY I RESOLUCIÓ: Vols construir un suport per al mòbil reutilitzant materials. Tria la combinació MÉS SOSTENIBLE i SEGURA:",
+                    type: "single_select",
+                    options: [
+                        { id: "o1", text: "Fusta reciclada + Cola blanca + Paper de vidre per pulir les vores", picto: "♻️", correct: true },
+                        { id: "o2", text: "Vidre trencat + Cinta adhesiva", picto: "⚠️", correct: false },
+                        { id: "o3", text: "Plàstic d'un sol ús tallat amb tisores sense protecció", picto: "🚫", correct: false }
+                    ],
+                    hint: "Prioritza el material reciclat i sense vores perilloses o tallants."
+                }
+            ]
+        };
+
+        // ESTAT GLOBAL
+        let activeTab = 'theory';
+        let currentTheoryIndex = 0;
+        let currentPracticeLevel = 1;
+        let currentPracticeIndex = 0;
+        let currentApplyLevel = 1;
+        let currentApplyIndex = 0;
+        let score = 0;
+        let selectedState = {};
+        let isHighContrast = false;
+
+        // INICIALITZACIÓ EN CARREGAR LA PÀGINA
+        window.addEventListener('DOMContentLoaded', () => {
+            updateProgressBar();
+            renderTheoryNavButtons();
+            renderTheoryCard();
+        });
+
+        function startApp() {
+            document.getElementById('screen-welcome').classList.add('hidden');
+            switchTab('theory');
+        }
+
+        function goHome() {
+            hideAllScreens();
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+
+        function hideAllScreens() {
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('tab-content-theory').classList.add('hidden');
+            document.getElementById('tab-content-practice').classList.add('hidden');
+            document.getElementById('tab-content-apply').classList.add('hidden');
+            document.getElementById('screen-summary').classList.add('hidden');
+        }
+
+        // CANVI DE PESTANYES PRINCIPALS
+        function switchTab(tabName) {
+            activeTab = tabName;
+            hideAllScreens();
+
+            // Actualitzar estils de botons de pestanya
+            document.getElementById('tab-btn-theory').className = tabName === 'theory' ? 'btn-touch tab-btn-active rounded-2xl py-3 px-2 font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all' : 'btn-touch bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all';
+            document.getElementById('tab-btn-practice').className = tabName === 'practice' ? 'btn-touch tab-btn-active rounded-2xl py-3 px-2 font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all' : 'btn-touch bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all';
+            document.getElementById('tab-btn-apply').className = tabName === 'apply' ? 'btn-touch tab-btn-active rounded-2xl py-3 px-2 font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all' : 'btn-touch bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 text-slate-200 py-3 px-2 rounded-2xl font-extrabold flex flex-col sm:flex-row items-center justify-center space-x-2 text-center transition-all';
+
+            if (tabName === 'theory') {
+                document.getElementById('tab-content-theory').classList.remove('hidden');
+                renderTheoryCard();
+            } else if (tabName === 'practice') {
+                document.getElementById('tab-content-practice').classList.remove('hidden');
+                loadPracticeItem();
+            } else if (tabName === 'apply') {
+                document.getElementById('tab-content-apply').classList.remove('hidden');
+                loadApplyItem();
+            }
+            updateProgressBar();
+        }
+
+        // RENDERITZADOR DE TEORIA VISUAL
+        function renderTheoryNavButtons() {
+            const container = document.getElementById('theory-nav-buttons');
+            container.innerHTML = '';
+            theoryData.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1.5 rounded-xl font-bold text-xs ${index === currentTheoryIndex ? 'bg-sky-500 text-slate-950 font-black' : 'bg-slate-700 text-slate-300'}`;
+                btn.innerText = `BLOC ${index + 1}`;
+                btn.onclick = () => {
+                    currentTheoryIndex = index;
+                    renderTheoryNavButtons();
+                    renderTheoryCard();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderTheoryCard() {
+            const container = document.getElementById('theory-card-container');
+            const data = theoryData[currentTheoryIndex];
+
+            let schemaHTML = '';
+
+            if (data.schemaType === 'before_after') {
+                schemaHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-rose-950/40 p-5 rounded-2xl border-2 border-rose-500/50 text-center space-y-2">
+                            <span class="text-xs font-black text-rose-300 uppercase">${data.beforeLabel}</span>
+                            <div class="text-6xl my-2">${data.beforePicto}</div>
+                            <p class="text-accessible-base font-bold text-slate-100">${data.beforeDesc}</p>
+                        </div>
+                        <div class="bg-emerald-950/40 p-5 rounded-2xl border-2 border-emerald-500/50 text-center space-y-2">
+                            <span class="text-xs font-black text-emerald-300 uppercase">${data.afterLabel}</span>
+                            <div class="text-6xl my-2">${data.afterPicto}</div>
+                            <p class="text-accessible-base font-bold text-slate-100">${data.afterDesc}</p>
+                        </div>
+                    </div>
+                `;
+            } else if (data.schemaType === 'comparison_3') {
+                schemaHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        ${data.items.map(item => `
+                            <div class="bg-slate-900/90 p-4 rounded-2xl border-2 border-slate-700 text-center space-y-2">
+                                <div class="text-5xl">${item.picto}</div>
+                                <div class="text-xs font-black text-sky-400 uppercase">${item.title}</div>
+                                <p class="text-xs text-slate-200 font-bold">${item.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (data.schemaType === 'process_steps') {
+                schemaHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                        ${data.steps.map(s => `
+                            <div class="bg-slate-900 p-3 rounded-2xl border-2 border-sky-500/40 text-center space-y-1">
+                                <span class="bg-sky-500 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">${s.num}</span>
+                                <div class="text-3xl my-1">${s.picto}</div>
+                                <div class="text-xs font-extrabold text-white">${s.label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (data.schemaType === 'autopsy_schema') {
+                schemaHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        ${data.parts.map(p => `
+                            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 text-center space-y-2">
+                                <div class="text-5xl">${p.picto}</div>
+                                <div class="text-xs font-black text-amber-400 uppercase">${p.name}</div>
+                                <p class="text-xs text-slate-300 font-medium">${p.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (data.schemaType === 'correct_incorrect') {
+                schemaHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-emerald-950/40 p-5 rounded-2xl border-2 border-emerald-500/60 text-center space-y-2">
+                            <span class="text-xs font-black text-emerald-300 uppercase">✅ ${data.correctTitle}</span>
+                            <div class="text-6xl my-2">${data.correctPicto}</div>
+                            <p class="text-accessible-base font-bold text-slate-100">${data.correctDesc}</p>
+                        </div>
+                        <div class="bg-rose-950/40 p-5 rounded-2xl border-2 border-rose-500/60 text-center space-y-2">
+                            <span class="text-xs font-black text-rose-300 uppercase">❌ ${data.incorrectTitle}</span>
+                            <div class="text-6xl my-2">${data.incorrectPicto}</div>
+                            <p class="text-accessible-base font-bold text-slate-100">${data.incorrectDesc}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="card-high-contrast p-6 rounded-3xl space-y-6 shadow-xl border-l-8 border-l-sky-400">
+                    <div class="flex items-center space-x-4 border-b border-slate-700 pb-3">
+                        <div class="pictogram-box w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
+                            ${data.picto}
+                        </div>
+                        <div>
+                            <span class="text-xs font-black tracking-widest text-sky-400 uppercase">ESQUEMA TEÒRIC VISUAL ${currentTheoryIndex + 1}/${theoryData.length}</span>
+                            <h2 class="text-xl md:text-2xl font-black text-white">${data.title}</h2>
+                        </div>
+                    </div>
+
+                    <!-- REQUADRE D'ESQUEMA -->
+                    <div class="p-2">
+                        ${schemaHTML}
+                    </div>
+
+                    <!-- BLOCS D'ACCÉS VISUAL (MIRA, OBSERVA, RECORDA) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-start space-x-3">
+                            <span class="text-3xl">👀</span>
+                            <div>
+                                <span class="text-xs font-black text-sky-400 uppercase">MIRA</span>
+                                <p class="text-xs text-slate-200 font-bold mt-1">${data.mira}</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-start space-x-3">
+                            <span class="text-3xl">🔎</span>
+                            <div>
+                                <span class="text-xs font-black text-emerald-400 uppercase">OBSERVA</span>
+                                <p class="text-xs text-slate-200 font-bold mt-1">${data.observa}</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-700 flex items-start space-x-3">
+                            <span class="text-3xl">💡</span>
+                            <div>
+                                <span class="text-xs font-black text-amber-400 uppercase">RECORDA</span>
+                                <p class="text-xs text-slate-200 font-bold mt-1">${data.recorda}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CONTROLS DE TEORIA -->
+                    <div class="flex justify-between items-center pt-2">
+                        <button onclick="prevTheory()" class="btn-touch px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-slate-200 font-bold disabled:opacity-30" ${currentTheoryIndex === 0 ? 'disabled' : ''}>
+                            ⬅️ ANTERIOR
+                        </button>
+                        <button onclick="switchTab('practice')" class="btn-touch px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-2xl flex items-center space-x-2">
+                            <span>ANAR A PRACTICAR</span>
+                            <span>🧠</span>
+                        </button>
+                        <button onclick="nextTheory()" class="btn-touch px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-slate-200 font-bold disabled:opacity-30" ${currentTheoryIndex === theoryData.length - 1 ? 'disabled' : ''}>
+                            SEGÜENT ➡️
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function nextTheory() {
+            if (currentTheoryIndex < theoryData.length - 1) {
+                currentTheoryIndex++;
+                renderTheoryNavButtons();
+                renderTheoryCard();
+            }
+        }
+
+        function prevTheory() {
+            if (currentTheoryIndex > 0) {
+                currentTheoryIndex--;
+                renderTheoryNavButtons();
+                renderTheoryCard();
+            }
+        }
+
+        // CARREGADOR DE PRACTICA (PESTANYA 2)
+        function setPracticeLevel(lvl) {
+            currentPracticeLevel = lvl;
+            currentPracticeIndex = 0;
+            updateLevelNavButtons('practice', lvl);
+            loadPracticeItem();
+        }
+
+        function loadPracticeItem() {
+            selectedState = {};
+            hidePracticeFeedback();
+            document.getElementById('practice-level-success').classList.add('hidden');
+            document.getElementById('practice-btn-check').classList.remove('hidden');
+            document.getElementById('practice-btn-next').classList.add('hidden');
+
+            const levelKey = `level${currentPracticeLevel}`;
+            const list = practiceData[levelKey];
+
+            if (!list || currentPracticeIndex >= list.length) {
+                showPracticeLevelSuccess();
+                return;
+            }
+
+            const item = list[currentPracticeIndex];
+
+            // Capçaleres
+            document.getElementById('practice-level-badge').innerText = `NIVELL ${currentPracticeLevel} · ${currentPracticeLevel === 1 ? 'HO RECONEC' : currentPracticeLevel === 2 ? 'HO ENTENC' : 'HO CONSOLIDO'}`;
+            document.getElementById('practice-level-title').innerText = `ACTIVITAT ${currentPracticeIndex + 1} DE ${list.length}`;
+            document.getElementById('practice-question-picto').innerText = item.picto;
+            document.getElementById('practice-question-text').innerText = item.question;
+
+            // Generar Àrea Interactiva
+            const container = document.getElementById('practice-interactive-area');
+            container.innerHTML = '';
+
+            if (item.type === 'single_select') {
+                renderSingleSelectGeneric(item, container, 'practice');
+            } else if (item.type === 'categorization') {
+                renderCategorizationGeneric(item, container, 'practice');
+            } else if (item.type === 'ordering') {
+                renderOrderingGeneric(item, container, 'practice');
+            }
+        }
+
+        function checkPracticeAnswer() {
+            const levelKey = `level${currentPracticeLevel}`;
+            const item = practiceData[levelKey][currentPracticeIndex];
+            let isCorrect = evaluateAnswerGeneric(item, 'practice');
+
+            if (isCorrect === null) return; // Faltava seleccionar opció
+
+            if (isCorrect) {
+                score += 20;
+                document.getElementById('score-val').innerText = score;
+                showPracticeFeedback('success', '🎉 Molt bé! Resposta correcta.');
+                document.getElementById('practice-btn-check').classList.add('hidden');
+                document.getElementById('practice-btn-next').classList.remove('hidden');
+            } else {
+                showPracticeFeedback('danger', `💡 Pista visual: ${item.hint}`);
+            }
+        }
+
+        function nextPracticeItem() {
+            currentPracticeIndex++;
+            loadPracticeItem();
+        }
+
+        function showPracticeLevelSuccess() {
+            document.getElementById('practice-interactive-area').innerHTML = '';
+            document.getElementById('practice-level-success').classList.remove('hidden');
+            document.getElementById('practice-btn-check').classList.add('hidden');
+            document.getElementById('practice-btn-next').classList.add('hidden');
+        }
+
+        function nextPracticeLevel() {
+            if (currentPracticeLevel < 3) {
+                setPracticeLevel(currentPracticeLevel + 1);
+            } else {
+                switchTab('apply');
+            }
+        }
+
+        function showPracticeHint() {
+            const levelKey = `level${currentPracticeLevel}`;
+            const item = practiceData[levelKey][currentPracticeIndex];
+            showPracticeFeedback('warning', `💡 Pista: ${item.hint}`);
+        }
+
+        // CARREGADOR D'APLICACIÓ (PESTANYA 3)
+        function setApplyLevel(lvl) {
+            currentApplyLevel = lvl;
+            currentApplyIndex = 0;
+            updateLevelNavButtons('apply', lvl);
+            loadApplyItem();
+        }
+
+        function loadApplyItem() {
+            selectedState = {};
+            hideApplyFeedback();
+            document.getElementById('apply-level-success').classList.add('hidden');
+            document.getElementById('apply-btn-check').classList.remove('hidden');
+            document.getElementById('apply-btn-next').classList.add('hidden');
+
+            const levelKey = `level${currentApplyLevel}`;
+            const list = applyData[levelKey];
+
+            if (!list || currentApplyIndex >= list.length) {
+                showApplyLevelSuccess();
+                return;
+            }
+
+            const item = list[currentApplyIndex];
+
+            document.getElementById('apply-level-badge').innerText = `NIVELL ${currentApplyLevel} · ${currentApplyLevel === 1 ? 'APLICO' : currentApplyLevel === 2 ? 'RESOLC' : 'CREO I RESOLC'}`;
+            document.getElementById('apply-level-title').innerText = `REPTE ${currentApplyIndex + 1} DE ${list.length}`;
+            document.getElementById('apply-question-text').innerText = item.question;
+
+            const container = document.getElementById('apply-interactive-area');
+            container.innerHTML = '';
+
+            if (item.type === 'single_select') {
+                renderSingleSelectGeneric(item, container, 'apply');
+            }
+        }
+
+        function checkApplyAnswer() {
+            const levelKey = `level${currentApplyLevel}`;
+            const item = applyData[levelKey][currentApplyIndex];
+            let isCorrect = evaluateAnswerGeneric(item, 'apply');
+
+            if (isCorrect === null) return;
+
+            if (isCorrect) {
+                score += 30;
+                document.getElementById('score-val').innerText = score;
+                showApplyFeedback('success', '🏆 Fantàstic! Has resolt el repte pràctic!');
+                document.getElementById('apply-btn-check').classList.add('hidden');
+                document.getElementById('apply-btn-next').classList.remove('hidden');
+            } else {
+                showApplyFeedback('danger', `💡 Pista visual: ${item.hint}`);
+            }
+        }
+
+        function nextApplyItem() {
+            currentApplyIndex++;
+            loadApplyItem();
+        }
+
+        function showApplyLevelSuccess() {
+            document.getElementById('apply-interactive-area').innerHTML = '';
+            document.getElementById('apply-level-success').classList.remove('hidden');
+            document.getElementById('apply-btn-check').classList.add('hidden');
+            document.getElementById('apply-btn-next').classList.add('hidden');
+        }
+
+        function nextApplyLevel() {
+            if (currentApplyLevel < 3) {
+                setApplyLevel(currentApplyLevel + 1);
+            } else {
+                showSummaryScreen();
+            }
+        }
+
+        function showApplyHint() {
+            const levelKey = `level${currentApplyLevel}`;
+            const item = applyData[levelKey][currentApplyIndex];
+            showApplyFeedback('warning', `💡 Pista: ${item.hint}`);
+        }
+
+        // RENDERITZADORS GENÈRICS D'ACTIVITATS VISUALS
+        function renderSingleSelectGeneric(item, container, scope) {
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-1 sm:grid-cols-3 gap-3';
+
+            item.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-touch card-high-contrast p-4 rounded-2xl flex flex-col items-center text-center hover:border-sky-400 transition-all focus-accessible select-option-btn-${scope}`;
+                btn.onclick = () => {
+                    document.querySelectorAll(`.select-option-btn-${scope}`).forEach(b => b.classList.remove('card-selected'));
+                    btn.classList.add('card-selected');
+                    selectedState.singleChoice = opt.id;
+                    if (scope === 'practice') hidePracticeFeedback();
+                    else hideApplyFeedback();
+                };
+
+                btn.innerHTML = `
+                    <span class="text-5xl mb-2">${opt.picto}</span>
+                    <span class="text-accessible-base font-bold text-slate-100">${opt.text}</span>
+                `;
+                grid.appendChild(btn);
+            });
+
+            container.appendChild(grid);
+        }
+
+        function renderCategorizationGeneric(item, container, scope) {
+            selectedState.catAssignments = {};
+
+            const categoriesDiv = document.createElement('div');
+            categoriesDiv.className = 'grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4';
+
+            item.categories.forEach(cat => {
+                const box = document.createElement('div');
+                box.className = 'bg-slate-900/90 p-3 rounded-2xl border-2 border-slate-700 text-center space-y-2';
+                box.id = `cat-box-${cat.id}`;
+                box.innerHTML = `
+                    <div class="text-3xl">${cat.picto}</div>
+                    <div class="text-xs font-black text-sky-400 uppercase">${cat.title}</div>
+                    <div id="drop-zone-${cat.id}" class="min-h-[50px] bg-slate-950/60 rounded-xl p-2 border border-dashed border-slate-700 flex flex-wrap gap-1 justify-center items-center">
+                        <span class="text-xs text-slate-400 font-medium">Tria un element</span>
+                    </div>
+                `;
+                categoriesDiv.appendChild(box);
+            });
+
+            const itemsDiv = document.createElement('div');
+            itemsDiv.className = 'flex flex-wrap gap-3 justify-center pt-2';
+
+            item.items.forEach(it => {
+                const itemBtn = document.createElement('div');
+                itemBtn.className = 'bg-slate-800 border-2 border-slate-600 p-3 rounded-2xl flex items-center space-x-2 shadow-md';
+                
+                let catOptions = item.categories.map(c => `<button onclick="assignCategoryGeneric('${it.id}', '${c.id}', '${scope}')" class="px-2 py-1 bg-slate-700 hover:bg-sky-500 hover:text-slate-950 text-xs font-bold rounded-lg">${c.title}</button>`).join(' ');
+
+                itemBtn.innerHTML = `
+                    <span class="text-2xl">${it.picto}</span>
+                    <span class="text-sm font-bold text-white">${it.name}</span>
+                    <div class="flex space-x-1 ml-2">
+                        ${catOptions}
+                    </div>
+                `;
+                itemsDiv.appendChild(itemBtn);
+            });
+
+            container.appendChild(categoriesDiv);
+            container.appendChild(itemsDiv);
+        }
+
+        function assignCategoryGeneric(itemId, catId, scope) {
+            selectedState.catAssignments[itemId] = catId;
+            const levelKey = `level${currentPracticeLevel}`;
+            const item = practiceData[levelKey][currentPracticeIndex];
+            const targetItem = item.items.find(i => i.id === itemId);
+            const dropZone = document.getElementById(`drop-zone-${catId}`);
+            
+            const existingTag = document.getElementById(`tag-${itemId}`);
+            if (existingTag) existingTag.remove();
+
+            const tag = document.createElement('span');
+            tag.id = `tag-${itemId}`;
+            tag.className = 'bg-sky-500/20 text-sky-300 border border-sky-400/40 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1';
+            tag.innerHTML = `${targetItem.picto} ${targetItem.name}`;
+            
+            dropZone.appendChild(tag);
+            if (scope === 'practice') hidePracticeFeedback();
+            else hideApplyFeedback();
+        }
+
+        function renderOrderingGeneric(item, container, scope) {
+            selectedState.currentSteps = [...item.steps];
+            const list = document.createElement('div');
+            list.className = 'space-y-3';
+
+            item.steps.forEach(step => {
+                const card = document.createElement('div');
+                card.className = 'card-high-contrast p-4 rounded-2xl flex items-center justify-between border-2 border-slate-700';
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-3xl p-2 bg-slate-900 rounded-xl border border-slate-700">${step.picto}</span>
+                        <span class="text-accessible-base font-bold text-white">${step.text}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="moveStepGeneric('${step.id}', 'up', '${scope}')" class="btn-touch bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-xl text-lg">⬆️</button>
+                        <button onclick="moveStepGeneric('${step.id}', 'down', '${scope}')" class="btn-touch bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-xl text-lg">⬇️</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            container.appendChild(list);
+        }
+
+        function moveStepGeneric(stepId, direction, scope) {
+            const steps = selectedState.currentSteps;
+            const idx = steps.findIndex(s => s.id === stepId);
+            if (idx === -1) return;
+
+            if (direction === 'up' && idx > 0) {
+                const temp = steps[idx];
+                steps[idx] = steps[idx - 1];
+                steps[idx - 1] = temp;
+            } else if (direction === 'down' && idx < steps.length - 1) {
+                const temp = steps[idx];
+                steps[idx] = steps[idx + 1];
+                steps[idx + 1] = temp;
+            }
+
+            const container = scope === 'practice' ? document.getElementById('practice-interactive-area') : document.getElementById('apply-interactive-area');
+            container.innerHTML = '';
+            renderOrderingGeneric({ steps: steps }, container, scope);
+        }
+
+        function evaluateAnswerGeneric(item, scope) {
+            if (item.type === 'single_select') {
+                if (!selectedState.singleChoice) {
+                    if (scope === 'practice') showPracticeFeedback('warning', '⚠️ Tria una de les opcions!');
+                    else showApplyFeedback('warning', '⚠️ Tria una de les opcions!');
+                    return null;
+                }
+                const opt = item.options.find(o => o.id === selectedState.singleChoice);
+                return opt && opt.correct;
+            } else if (item.type === 'categorization') {
+                const assignments = selectedState.catAssignments || {};
+                if (Object.keys(assignments).length < item.items.length) {
+                    showPracticeFeedback('warning', '⚠️ Classifica tots els elements!');
+                    return null;
+                }
+                return item.items.every(i => assignments[i.id] === i.correctCategory);
+            } else if (item.type === 'ordering') {
+                const steps = selectedState.currentSteps || [];
+                return steps.every((s, idx) => s.correctOrder === (idx + 1));
+            }
+            return false;
+        }
+
+        function showPracticeFeedback(type, message) {
+            const box = document.getElementById('practice-feedback-box');
+            box.className = `p-4 rounded-2xl font-bold flex items-center space-x-3 transition-all border-2 ${type === 'success' ? 'bg-emerald-950/90 border-emerald-500 text-emerald-200' : type === 'danger' ? 'bg-rose-950/90 border-rose-500 text-rose-200' : 'bg-amber-950/90 border-amber-500 text-amber-200'}`;
+            document.getElementById('practice-feedback-icon').innerText = type === 'success' ? '✅' : type === 'danger' ? '🧩' : '💡';
+            document.getElementById('practice-feedback-text').innerText = message;
+            box.classList.remove('hidden');
+        }
+
+        function hidePracticeFeedback() {
+            document.getElementById('practice-feedback-box').classList.add('hidden');
+        }
+
+        function showApplyFeedback(type, message) {
+            const box = document.getElementById('apply-feedback-box');
+            box.className = `p-4 rounded-2xl font-bold flex items-center space-x-3 transition-all border-2 ${type === 'success' ? 'bg-emerald-950/90 border-emerald-500 text-emerald-200' : type === 'danger' ? 'bg-rose-950/90 border-rose-500 text-rose-200' : 'bg-amber-950/90 border-amber-500 text-amber-200'}`;
+            document.getElementById('apply-feedback-icon').innerText = type === 'success' ? '🏆' : type === 'danger' ? '🧩' : '💡';
+            document.getElementById('apply-feedback-text').innerText = message;
+            box.classList.remove('hidden');
+        }
+
+        function hideApplyFeedback() {
+            document.getElementById('apply-feedback-box').classList.add('hidden');
+        }
+
+        function updateLevelNavButtons(scope, lvl) {
+            const prefix = scope === 'practice' ? 'lvl-btn' : 'app-lvl-btn';
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`${prefix}-${i}`);
+                if (btn) {
+                    btn.className = i === lvl ? 'btn-touch px-3 py-1 bg-emerald-500 text-slate-950 font-black rounded-xl text-xs' : 'btn-touch px-3 py-1 bg-slate-700 text-slate-300 font-black rounded-xl text-xs';
+                }
+            }
+        }
+
+        function updateProgressBar() {
+            let percentage = 20;
+            if (activeTab === 'theory') percentage = 33;
+            else if (activeTab === 'practice') percentage = 66;
+            else if (activeTab === 'apply') percentage = 100;
+
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        function showSummaryScreen() {
+            hideAllScreens();
+            document.getElementById('screen-summary').classList.remove('hidden');
+            document.getElementById('progress-bar').style.width = '100%';
+        }
+
+        function resetApp() {
+            score = 0;
+            currentTheoryIndex = 0;
+            currentPracticeLevel = 1;
+            currentPracticeIndex = 0;
+            currentApplyLevel = 1;
+            currentApplyIndex = 0;
+            document.getElementById('score-val').innerText = '0';
+            goHome();
+        }
+
+        function toggleHighContrast() {
+            isHighContrast = !isHighContrast;
+            if (isHighContrast) {
+                document.body.classList.add('high-contrast-mode');
+            } else {
+                document.body.classList.remove('high-contrast-mode');
+            }
+        }
+    </script>
+</body>
+</html>
